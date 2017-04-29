@@ -10,7 +10,25 @@ ssh_authorized_keys:
 hostname: "coreos"
 
 coreos:  
+  # Update and reboot every Thursday between 04:00 and 05:00:
+  update:
+    reboot-strategy: "reboot"
+  locksmith:
+    window-start: Thu 04:00
+    window-length: 1h
   units:
+    # Set time zone 
+    - name: settimezone.service
+      command: start
+      content: |
+        [Unit]
+        Description=Set the time zone
+
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone America/Vancouver
+        RemainAfterExit=yes
+        Type=oneshot
+
     - name: 00-enp15s0.network
       runtime: true
       content: |
