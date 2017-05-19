@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #set -x
 # Launch script that use this script must contain following variable 
 #   CONTAINTER_NAME
@@ -27,7 +29,7 @@ if  [ -z "$IMAGE_TAG" ]; then
 fi
 
 echo "---------------------------------------------------"
-echo "Contain Name: [$CONTAINTER_NAME] Image tag: [$IMAGE_TAG]"  
+echo "Container Name: [$CONTAINTER_NAME] Image tag: [$IMAGE_TAG]"  
 echo "---------------------------------------------------"
 printf "\n\r"
 
