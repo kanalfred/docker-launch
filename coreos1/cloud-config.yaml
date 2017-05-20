@@ -1,0 +1,81 @@
+#cloud-config
+
+# update cloud-config without reboot
+# sudo coreos-cloudinit --from-file=/var/lib/coreos-install/user_data
+
+hostname: "coreos1"
+
+# include one or more SSH public keys
+users:
+  - name: core
+    ssh_authorized_keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDIfjbJVyHtkv/J6sSieaOnAybVLM1M6iwTRcWoyg2o8WakW4ZKee+Ss+SbEaMBPb4pNYNnU+TNd2U4eWvwhJ/vZkQK/6Cv5mC9SdSwN/6I5HUsWoEHW1YmMwRiZUtBblA5YC3kEAZra9CeaZdhAsvhA5rT7K1hOOq2VeaAp2ZgQbT/uSg7rrFfLoELvKWHzCWAoSqXiVQZ//35QX9LI212vPpsAqBj8OQLFQu1AeDgfpad5rmdtADsFOu/0vpLWjQ4553ha7Er+8fqh9q/UUCDdIqHaYrJgNFWyCiQiFQWRN0GaxxjZJSAFT+VGfQUjTqo6FF7lM7nU+d9ziUyu8D"
+
+coreos:  
+  # Update and reboot every Thursday between 04:00 and 05:00:
+  update:
+    reboot-strategy: "reboot"
+  locksmith:
+    window-start: Thu 04:00
+    window-length: 1h
+  units:
+    # Set time zone 
+    - name: settimezone.service
+      command: start
+      content: |
+        [Unit]
+        Description=Set the time zone
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone America/Vancouver
+        RemainAfterExit=yes
+        Type=oneshot
+
+    # Eth interface 1 - ip 120 range
+    - name: 20-multi_ip.network
+      content: |
+        [Unit]
+        Description= Setup multi_ip for 2 network interfaces (ip 120 & 130 range)
+        [Match]
+        Name=ens32
+        [Network]
+        DNS=8.8.8.8
+        Address=192.168.3.110/24
+        Gateway=192.168.3.1
+        Address=192.168.3.112/24
+        Gateway=192.168.3.1
+        Address=192.168.3.113/24
+        Gateway=192.168.3.1
+        Address=192.168.3.114/24
+        Gateway=192.168.3.1
+    # mount unit name has to follow mount destination path
+    # Storage Main
+    #- name: mnt-storage.mount
+    #  command: start
+    #  content: |
+    #    [Unit]
+    #    Description= Primary storage Drive
+    #    [Mount]
+    #    What=/dev/disk/by-uuid/8a65b7df-0598-4cf1-ab71-10394c0f18ce
+    #    Where=/mnt/storage
+    #    Type=ext4
+    #- name: docker-tcp.socket
+    #  command: start
+    #  content: |
+    #    [Unit]
+    #    Description= ssh port to specific ip
+
+    #   [Socket]
+    #    ListenStream=192.168.3.120:22
+    #    FreeBind=true
+
+    #- name: runcmd.service
+    #  command: start
+    #  content: |
+    #    [Unit]
+    #    Description= Create virutal network interface
+
+    #    [Service]
+    #    Type=oneshot
+    #    ExecStart=/bin/sh -c "ifconfig enp14s0:0 192.168.3.121 && \
+    #                          ifconfig enp14s0:1 192.168.3.122 && \
+    #                          ifconfig enp14s0:2 192.168.3.123"
