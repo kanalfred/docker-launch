@@ -1,0 +1,21 @@
+# https://coreos.com/os/docs/latest/getting-started-with-systemd.html
+# Add this file to /etc/systemd/system/
+# sudo systemctl enable /etc/systemd/system/mariadb.service
+# sudo systemctl start mariadb.service
+# sudo systemctl daemon-reload
+# systemctl list-units | grep service
+[Unit]
+Description=mariadb
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill mariadb
+ExecStartPre=-/usr/bin/docker rm mariadb
+ExecStartPre=/usr/bin/docker pull mariadb
+ExecStart=/usr/bin/docker run --name mariadb -p 192.168.3.112:3306:3306 -v /data/mariadb/db:/var/lib/mysql --restart=always -e MYSQL_ROOT_PASSWORD=test123 mariadb
+ExecStop=/usr/bin/docker stop mariadb
+
+[Install]
+WantedBy=multi-user.target
