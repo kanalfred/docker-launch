@@ -1,0 +1,35 @@
+# https://coreos.com/os/docs/latest/getting-started-with-systemd.html
+# Copy servier file to 
+#   /etc/systemd/system/fileserver.service
+# Restart service
+#   systemctl restart etcd2.service
+#   sudo systemctl daemon-reload
+# Enable service
+#   sudo systemctl enable foo.service
+# Restart service
+#   sudo systemctl restart fileserver.service 
+[Unit]
+Description=fileserver
+After=docker.service
+Requires=docker.service
+
+[Service]
+Environment=CONTAINTER_NAME=fileserver
+Environment=IMAGE_TAG=kanalfred/fileserver
+# virutal nic
+Environment=IPADDRESS=192.168.3.130
+
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill ${CONTAINTER_NAME}
+ExecStartPre=-/usr/bin/docker rm ${CONTAINTER_NAME}
+ExecStartPre=/usr/bin/docker pull ${IMAGE_TAG} 
+
+ExecStart=/usr/bin/docker run -h fileserver --name ${CONTAINTER_NAME} \
+--restart=always \
+--volumes-from data-fileserver --volumes-from data-fileserver-bak --volumes-from data-other \
+-p ${$IPADDRESS}:2200:22 -p ${IPADDRESS}:445:445 -p ${IPADDRESS}:139:139 -p ${IPADDRESS}:135:135 -p ${IPADDRESS}:137:137/udp -p ${IPADDRESS}:138:138/udp $IMAGE_TAG
+
+ExecStop=/usr/bin/docker stop ${CONTAINTER_NAME} 
+
+[Install]
+WantedBy=multi-user.target
