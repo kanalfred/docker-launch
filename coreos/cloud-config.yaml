@@ -10,11 +10,11 @@ ssh_authorized_keys:
 hostname: "coreos"
 
 coreos:  
-  # Update and reboot every Thursday between 04:00 and 05:00:
+  # Update and reboot every Thursday between 08:00 and 09:00:
   update:
     reboot-strategy: "reboot"
   locksmith:
-    window-start: Thu 04:00
+    window-start: Thu 08:00
     window-length: 1h
   units:
     # Set time zone 
