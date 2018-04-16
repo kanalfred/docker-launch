@@ -4,6 +4,9 @@ set -x
 # Set password : export DOCKER_PASS='xxxx'
 # Unit linkl
 # https://coreos.com/os/docs/latest/getting-started-with-systemd.html
+# download and install on new coreos
+# 1)  wget -qO- your_dropbox_share_link_here | tar xvz -C /data/mariadb
+# 2)  ./data/launch/mariadb/mariadb.sh
 IPADDRESS="192.168.3.112"
 DOCKER_PASS=${DOCKER_PASS:='docker!'}
 docker run --name mariadb -p $IPADDRESS:3306:3306 -v /data/mariadb/db:/var/lib/mysql --restart=always -e MYSQL_ROOT_PASSWORD=$DOCKER_PASS -d mariadb
