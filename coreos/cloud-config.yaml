@@ -104,7 +104,7 @@ coreos:
         Description= Addition storage Drive
 
         [Mount]
-        What=/dev/disk/by-uuid/e7ff45e3-4932-4eab-9193-4e50478a7b72
+        What=/dev/disk/by-uuid/a6225e22-0582-4002-b29a-080ebeac49e0
         Where=/mnt/other
         Type=ext4
 
